@@ -16,7 +16,7 @@ void check(bool condition, const std::string& message) {
 } // end check()
 
 int main() {
-    const auto file = std::filesystem::temp_directory_path() / "intermediate_bank_test.db";
+    const auto file = std::filesystem::temp_directory_path() / "cpp_banking_auth_test.db";
     const auto temp = file.string() + ".tmp";
 
     try {
@@ -36,6 +36,7 @@ int main() {
         check(!InputHandling::parseMoney("12.345", cents), "Too many decimal places");
         check(!InputHandling::parseMoney("12.3.4", cents), "Two decimal points");
         check(!InputHandling::parseMoney("$10", cents), "Currency symbol");
+        check(!InputHandling::parseMoney(".", cents), "Lone decimal point rejected");
         check(InputHandling::parseMoney("92233720368547758.07", cents), "Largest value");
         check(cents == INT64_MAX, "Largest cents value");
         check(!InputHandling::parseMoney("92233720368547758.08", cents), "Overflow rejected");
@@ -49,6 +50,12 @@ int main() {
         check(!Crypto::sameHash(hash1, Crypto::hashPassword("another-long-password", salt)),
               "Different password hashes");
         check(Crypto::fromHex(Crypto::toHex(salt)) == salt, "Salt hex round-trip");
+        try {
+            (void)Crypto::fromHex("+f");
+            check(false, "Non-hex character must be rejected");
+        } catch (const std::invalid_argument&) {
+            // Expected invalid hex input.
+        } // end catch
 
         // AccountManager tests: saving and loading actually work.
         {
@@ -97,7 +104,7 @@ int main() {
 
         std::filesystem::remove(file);
         std::filesystem::remove(temp);
-        std::cout << "All intermediate core tests passed.\n";
+        std::cout << "All core tests passed.\n";
         return 0;
     } catch (const std::exception& error) {
         std::filesystem::remove(file);

@@ -75,7 +75,7 @@ int main() {
             return 1;
         } // end if
 
-        std::cout << "Secure C++ Banking Demo (educational only)\n"
+        std::cout << "C++ Banking and Authentication System (educational only)\n"
                   << "Loaded accounts: " << manager.accountCount() << '\n';
         while (true) {
             std::cout << "\n1. Create account\n2. Log in\n3. Exit\n";

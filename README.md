@@ -21,7 +21,8 @@ A C++17 command-line banking simulation for practicing object-oriented programmi
 Cpp-Banking-and-Authentication/
 ├── CMakeLists.txt
 ├── README.md
-├── LEARNING_STEPS.md
+├── .gitignore
+├── .github/workflows/ci.yml
 ├── src/
 │   ├── main.cpp                 Menu and program flow
 │   ├── Account.h / Account.cpp  Account state and operations
@@ -79,4 +80,4 @@ This is a single-user, local educational simulation. It deliberately focuses on 
 
 ## Learning goals
 
-This project provides hands-on practice with classes and constructors, vectors, references and pointers, functions, file streams, error handling, OpenSSL integration, and automated C++ testing. `LEARNING_STEPS.md` provides exercises for understanding and extending each module.
+This project provides hands-on practice with classes and constructors, vectors, references and pointers, functions, file streams, error handling, OpenSSL integration, and automated C++ testing. The source files and tests demonstrate how these pieces fit together.

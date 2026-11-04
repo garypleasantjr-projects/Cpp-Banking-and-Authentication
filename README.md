@@ -1,49 +1,51 @@
 # C++ Banking and Authentication System
 
-A C++17 command-line banking simulation for practicing object-oriented programming, account management, authentication, input validation, and file persistence. The application uses OpenSSL for password hashing and includes automated tests for its core behavior.
+**Personal project | C++17 | OpenSSL | CMake | CTest**
 
-**Educational project only.** This is not a real banking system. Do not enter real financial information, identity numbers, or passwords you use elsewhere.
+A modular command-line banking simulation built in C++17. The application manages user accounts, verifies credentials, processes deposits and withdrawals, and persists account data between sessions. It combines object-oriented design, file I/O, input validation, and password-based authentication in a single console application.
 
 ## Features
 
-- Create an account and log in with a username and password.
-- View a balance, deposit funds, and withdraw funds.
-- Change a password after verifying the current password.
-- Save accounts in a local text file and load them when the program starts again.
-- Store salted password hashes rather than plaintext passwords.
-- Represent money as integer cents to avoid floating-point rounding in balance calculations.
-- Validate user input and reject malformed monetary values or database records.
-- Run automated tests for input handling, hashing, transactions, and saving/loading accounts.
+- **Account management:** Create accounts, authenticate users, and change passwords after verifying the current password.
+- **Transactions:** View balances, deposit funds, and withdraw funds with insufficient-funds and overflow checks.
+- **Password protection:** Generate random per-account salts and derive password hashes using OpenSSL PBKDF2-HMAC-SHA256. Compare derived hashes with a constant-time comparison function.
+- **Persistent storage:** Save and reload account records using a local file, including recovery checks for invalid records and a temporary-file replacement approach for writes.
+- **Input validation:** Validate usernames, passwords, and monetary amounts; store balances as 64-bit integer cents instead of floating-point values.
+- **Automated verification:** Test core functionality with CTest and build-and-test checks in GitHub Actions.
 
-## Project structure
+## Tech stack
+
+| Component | Technology |
+| --- | --- |
+| Language | C++17 |
+| Cryptography | OpenSSL |
+| Build system | CMake |
+| Testing | CTest and GitHub Actions |
+| Persistence | C++ file streams and a local record file |
+
+## Architecture
+
+The application separates the command-line interface, account operations, authentication utilities, validation, and persistence.
 
 ```text
 Cpp-Banking-and-Authentication/
+├── .github/workflows/ci.yml   # Automated build and tests
+├── .gitignore
 ├── CMakeLists.txt
 ├── README.md
-├── .gitignore
-├── .github/workflows/ci.yml
 ├── src/
-│   ├── main.cpp                 Menu and program flow
-│   ├── Account.h / Account.cpp  Account state and operations
-│   ├── AccountManager.h / AccountManager.cpp  Account collection and file storage
-│   ├── Crypto.h / Crypto.cpp    OpenSSL password hashing and byte conversion
-│   └── InputHandling.h / InputHandling.cpp  Input validation and money formatting
+│   ├── main.cpp                # Command-line menus and application flow
+│   ├── Account.h / .cpp        # Account state, balances, and authentication
+│   ├── AccountManager.h / .cpp # Account collection and file persistence
+│   ├── Crypto.h / .cpp         # OpenSSL hashing, salts, and hex conversion
+│   └── InputHandling.h / .cpp  # Input checks and money parsing
 └── tests/
-    └── test_core.cpp            Automated core tests
+    └── test_core.cpp           # Core functionality and regression tests
 ```
-
-The program is divided into small modules so each part has a specific responsibility:
-
-1. **`main.cpp`** displays menus and coordinates user actions.
-2. **`InputHandling`** checks input and converts amounts such as `"125.5"` into `12550` cents.
-3. **`Account`** stores account information and implements deposit, withdrawal, and password verification.
-4. **`AccountManager`** manages a `std::vector<Account>` and loads or saves account data.
-5. **`Crypto`** uses OpenSSL to generate random salts and derive PBKDF2-HMAC-SHA256 password hashes.
 
 ## Build and run
 
-**Requirements:** CMake 3.16 or newer, a C++17 compiler, and OpenSSL development libraries.
+**Requirements:** CMake 3.16+, a C++17 compiler, and OpenSSL development libraries.
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -52,32 +54,20 @@ ctest --test-dir build --output-on-failure
 ./build/secure_bank
 ```
 
-The executable uses a `data/` folder relative to the working directory. Passwords are visible while typed in the console; this project does not implement masked terminal input.
+Use the menu to create an account, log in, view the balance, deposit or withdraw funds, and update the account password. Account data is stored in `data/accounts.db` relative to the working directory.
 
-## Storage and password security
+## Implementation details
 
-The local database starts with a `BANK_DEMO_V1` header. Each account is saved using this structure:
+**Authentication:** Account credentials are represented by a random 16-byte salt and a 32-byte PBKDF2-HMAC-SHA256 hash using 600,000 iterations. Password hashes, rather than plaintext passwords, are saved to disk. The local file format does not store a per-account iteration count.
 
-```text
-username|salt_hex|hash_hex|balance_cents
-```
+**Balances:** Monetary input is parsed into `std::int64_t` cents to avoid floating-point rounding in transaction calculations. Deposits and withdrawals check invalid amounts, available funds, and overflow.
 
-The password itself is not stored. OpenSSL's PBKDF2-HMAC-SHA256 function derives a hash using a randomly generated salt. This project uses a fixed work factor of 600,000 iterations. Changing that constant would require a migration strategy for previously saved accounts, because the current database format does not store an iteration count per account.
+**Persistence:** `AccountManager` stores accounts in a `std::vector<Account>`, loads validated records on startup, and writes updates through a temporary file before replacing the database file. Account operations attempt to restore their previous state if saving fails.
 
 ## Testing
 
-`tests/test_core.cpp` checks username and password validation, money parsing, password hashing, deposits and withdrawals, password changes, saving/loading accounts, and malformed database records. The GitHub Actions workflow also configures and builds the project, runs CTest, and checks that the program starts and exits.
+The `tests/test_core.cpp` suite covers input validation, money parsing and boundary conditions, hashing, account creation and authentication, transactions, password changes, persistence, and malformed stored data. The GitHub Actions workflow builds the project, runs CTest, and checks that the application starts and exits.
 
 ## Scope and limitations
 
-This is a single-user, local educational simulation. It deliberately focuses on core C++ and security concepts rather than production banking infrastructure.
-
-- The local database is neither encrypted nor protected against deliberate file tampering.
-- There is no login rate limiting, multi-factor authentication, or password masking.
-- It does not provide concurrent account access, a transaction ledger, or production-grade recovery.
-- Saving through a temporary file and rename reduces some write-failure risks, but it is not a transactional database; cross-platform replacement details may differ.
-- Input rules and authorization are intentionally limited to this console demonstration.
-
-## Learning goals
-
-This project provides hands-on practice with classes and constructors, vectors, references and pointers, functions, file streams, error handling, OpenSSL integration, and automated C++ testing. The source files and tests demonstrate how these pieces fit together.
+This is a **personal software project and local banking simulation**, not a deployed financial service or a production banking platform. Its file-based storage is neither encrypted nor tamper-resistant. The application does not implement login rate limiting, multi-factor authentication, password masking, concurrent access, or a transactional ledger. Do not use real financial data or passwords used for other services.

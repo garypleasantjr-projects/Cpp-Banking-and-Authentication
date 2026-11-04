@@ -117,6 +117,15 @@ bool AccountManager::load() {
                 return false;
             } // end if
 
+           // getline(stream, str, delimiter)
+           // Parameters:
+           // stream: Input stream from where characters are read.
+           // str: String where the input is stored after being read from the stream.
+           // delim(optional): Delimiter is a character where getline stop to read the data. 
+           // By default, newline character '\n' is the delimiter.
+           // https://www.geeksforgeeks.org/cpp/getline-string-c/
+
+
             if (!InputHandling::validUsername(username)) {
                 return false;
             } // end if

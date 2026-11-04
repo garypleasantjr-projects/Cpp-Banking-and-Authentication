@@ -4,6 +4,7 @@
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 
+#include <cctype>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -59,6 +60,12 @@ std::vector<unsigned char> fromHex(const std::string& text) {
     if (text.size() % 2 != 0) {
         throw std::invalid_argument("Hex text must have an even length.");
     } // end if
+
+    for (unsigned char character : text) {
+        if (!std::isxdigit(character)) {
+            throw std::invalid_argument("Invalid hex character.");
+        } // end if
+    } // end for
 
     std::vector<unsigned char> bytes;
     for (std::size_t i = 0; i < text.size(); i += 2) {

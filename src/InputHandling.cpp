@@ -59,7 +59,7 @@ bool validPassword(const std::string& password) {
 } // end validPassword()
 
 bool parseMoney(const std::string& text, std::int64_t& centsOut) {
-    if (text.empty()) {
+    if (text.empty() || text == ".") {
         return false;
     } // end if
 

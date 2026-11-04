@@ -79,9 +79,13 @@ bool AccountManager::load() {
     const bool exists = std::filesystem::exists(databaseFile, error);
     if (error) {
         return false;
+        // if error is found
     } // end if
+    
     if (!exists) {
         return true;
+        // if no error is found and the database file does not exist,
+        // database is empty, no saved accounts, file path does not exist
     } // end if
 
     std::ifstream input(databaseFile);
@@ -148,13 +152,13 @@ bool AccountManager::load() {
 } // end load()
 
 bool AccountManager::save() const {
-    const std::string tempFile = databaseFile + ".tmp";
+    const std::string tempFile = databaseFile + ".tmp"; // create a temporary file before replacing prior database file
     std::ofstream output(tempFile);
     if (!output) {
         return false;
     } // end if
 
-    output << "BANK_DEMO_V1\n";
+    output << "BANK_DEMO_V1\n\n";
     for (const Account& account : accounts) {
         output << account.getUsername() << '|'
                << Crypto::toHex(account.getSalt()) << '|'
@@ -173,10 +177,11 @@ bool AccountManager::save() const {
     std::filesystem::rename(tempFile, databaseFile, error);
     if (error) {
         std::error_code ignored;
-        std::filesystem::remove(tempFile, ignored);
+        std::filesystem::remove(tempFile, ignored); // if database file replacement returns an error
         return false;
     } // end if
-    return true;
+    
+    return true; // if tempFile successfully replaced the databaseFile
 } // end save()
 
 std::size_t AccountManager::accountCount() const {

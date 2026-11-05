@@ -140,7 +140,7 @@ bool AccountManager::load() {
             // Every character in the saved balance must be a digit.
             for (unsigned char character : balanceText) {
                 if (!std::isdigit(character)) {
-                    return false; // checks if each character is a digit or not, if yes, return false
+                    return false; // checks if each character is not a digit, if not a digit, return false
                 } // end if
             } // end for
             

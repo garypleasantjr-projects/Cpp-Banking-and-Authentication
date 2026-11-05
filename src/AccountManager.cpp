@@ -129,6 +129,8 @@ bool AccountManager::load() {
             if (!InputHandling::validUsername(username)) {
                 return false;
             } // end if
+
+            // check for duplicate usernames
             for (const Account& other : loaded) {
                 if (other.getUsername() == username) {
                     return false;
@@ -138,9 +140,10 @@ bool AccountManager::load() {
             // Every character in the saved balance must be a digit.
             for (unsigned char character : balanceText) {
                 if (!std::isdigit(character)) {
-                    return false;
+                    return false; // checks if each character is a digit or not, if yes, return false
                 } // end if
             } // end for
+            
             std::size_t used = 0;
             const std::int64_t cents = std::stoll(balanceText, &used);
             if (used != balanceText.size() || cents < 0) {

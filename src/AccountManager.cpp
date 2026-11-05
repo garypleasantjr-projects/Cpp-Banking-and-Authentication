@@ -170,7 +170,7 @@ bool AccountManager::save() const {
         return false;
     } // end if
 
-    output << "BANK_DEMO_V1\n\n";
+    output << "BANK_DEMO_V1\n";
     for (const Account& account : accounts) {
         output << account.getUsername() << '|'
                << Crypto::toHex(account.getSalt()) << '|'

@@ -130,7 +130,7 @@ bool AccountManager::load() {
                 return false;
             } // end if
 
-            // check for duplicate usernames
+            // check for duplicate usernames after line has been parsed, still within the while loop
             for (const Account& other : loaded) {
                 if (other.getUsername() == username) {
                     return false;

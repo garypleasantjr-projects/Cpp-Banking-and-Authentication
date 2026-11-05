@@ -67,7 +67,9 @@ std::vector<unsigned char> fromHex(const std::string& text) {
         } // end if
     } // end for
 
-    std::vector<unsigned char> bytes;
+    std::vector<unsigned char> bytes; 
+    // take and validate every 2 characters within the hex string text that was passed in and push
+    // it into a vector for the caller to use
     for (std::size_t i = 0; i < text.size(); i += 2) {
         const std::string pair = text.substr(i, 2);
         std::size_t used = 0;
@@ -76,8 +78,21 @@ std::vector<unsigned char> fromHex(const std::string& text) {
             throw std::invalid_argument("Invalid hex text.");
         } // end if
         bytes.push_back(static_cast<unsigned char>(value));
-    } // end for
+    } // end for loop
+    
     return bytes;
+
+    // substr Parameters
+    // pos	-	position of the first character to include
+    // count	-	how many characters to read from the first selected index
+
+    // stoul Parameters
+    // str	-	the string to convert
+    // pos	-	address of an integer to store the number of characters processed
+    // base	-	the number base
+
+
+    
 } // end fromHex()
 
 } // end namespace Crypto

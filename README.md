@@ -11,7 +11,7 @@ A modular command-line banking simulation built in C++17. The application manage
 - **Password protection:** Generate random per-account salts and derive password hashes using OpenSSL PBKDF2-HMAC-SHA256. Compare derived hashes with a constant-time comparison function.
 - **Persistent storage:** Save and reload account records using a local file, including recovery checks for invalid records and a temporary-file replacement approach for writes.
 - **Input validation:** Validate usernames, passwords, and monetary amounts; store balances as 64-bit integer cents instead of floating-point values.
-- **Automated verification:** Test core functionality with CTest and build-and-test checks in GitHub Actions.
+- **Automated verification:** Test core functionality locally with CTest.
 
 ## Tech stack
 
@@ -20,7 +20,7 @@ A modular command-line banking simulation built in C++17. The application manage
 | Language | C++17 |
 | Cryptography | OpenSSL |
 | Build system | CMake |
-| Testing | CTest and GitHub Actions |
+| Testing | CTest |
 | Persistence | C++ file streams and a local record file |
 
 ## Architecture
@@ -29,7 +29,6 @@ The application separates the command-line interface, account operations, authen
 
 ```text
 Cpp-Banking-and-Authentication/
-├── .github/workflows/ci.yml   # Automated build and tests
 ├── .gitignore
 ├── CMakeLists.txt
 ├── README.md
@@ -66,7 +65,7 @@ Use the menu to create an account, log in, view the balance, deposit or withdraw
 
 ## Testing
 
-The `tests/test_core.cpp` suite covers input validation, money parsing and boundary conditions, hashing, account creation and authentication, transactions, password changes, persistence, and malformed stored data. The GitHub Actions workflow builds the project, runs CTest, and checks that the application starts and exits.
+The `tests/test_core.cpp` suite covers input validation, money parsing and boundary conditions, hashing, account creation and authentication, transactions, password changes, persistence, and malformed stored data. Run the test suite locally using the CTest command in the build instructions above.
 
 ## Scope and limitations
 
